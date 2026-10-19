@@ -1,6 +1,9 @@
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+# Maven wrapper is not used on this branch -- build with a locally installed `mvn`
+/mvnw
+/mvnw.cmd
+/.mvn/wrapper/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
