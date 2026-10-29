@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
+import org.owasp.encoder.Encode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,9 +21,14 @@ public class PathTraversalController {
 
 
     @GetMapping("/file")
-    public String readFile(@RequestParam String filename) throws IOException {
-        log.info("Getting File: {}", new File("/tmp/" + filename).getAbsolutePath());
-        return Files.readString(Path.of("/tmp/" + filename));
+        Path baseDir = Path.of("/tmp").toAbsolutePath().normalize();
+        Path resolved = baseDir.resolve(filename).normalize();
+        if (!resolved.startsWith(baseDir)) {
+            throw new IOException("Invalid filename: path traversal attempt detected");
+        }
+        log.info("Getting File: {}", resolved);
+        return Files.readString(resolved);
+        return Encode.forHtml(Files.readString(Path.of("/tmp/" + filename)));
     }
 
 
